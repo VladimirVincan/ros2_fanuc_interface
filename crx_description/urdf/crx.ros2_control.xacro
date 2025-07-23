@@ -27,8 +27,8 @@
 
       <joint name="J1">
         <command_interface name="position">
-          <param name="min">{-2*pi}</param>
-          <param name="max">{2*pi}</param>
+          <param name="min">-6.283185</param>
+          <param name="max">6.283185</param>
         </command_interface>
         <!-- <command_interface name="velocity">
           <param name="min">-3.15</param>
@@ -42,8 +42,8 @@
 
       <joint name="J2">
         <command_interface name="position">
-          <param name="min">{-2*pi}</param>
-          <param name="max">{2*pi}</param>
+          <param name="min">-6.283185</param>
+          <param name="max">6.283185</param>
         </command_interface>
         <!-- <command_interface name="velocity">
           <param name="min">-3.15</param>
@@ -57,8 +57,8 @@
 
       <joint name="J3">
         <command_interface name="position">
-          <param name="min">{-pi}</param>
-          <param name="max">{pi}</param>
+          <param name="min">-3.141592</param>
+          <param name="max">3.141592</param>
         </command_interface>
         <!-- <command_interface name="velocity">
           <param name="min">-3.15</param>
@@ -72,8 +72,8 @@
 
       <joint name="J4">
         <command_interface name="position">
-          <param name="min">{-2*pi}</param>
-          <param name="max">{2*pi}</param>
+          <param name="min">-6.283185</param>
+          <param name="max">6.283185</param>
         </command_interface>
         <!-- <command_interface name="velocity">
           <param name="min">-3.2</param>
@@ -87,8 +87,8 @@
 
       <joint name="J5">
         <command_interface name="position">
-          <param name="min">{-2*pi}</param>
-          <param name="max">{2*pi}</param>
+          <param name="min">-6.283185</param>
+          <param name="max">6.283185</param>
         </command_interface>
         <!-- <command_interface name="velocity">
           <param name="min">-3.2</param>
@@ -102,8 +102,8 @@
 
       <joint name="J6">
         <command_interface name="position">
-          <param name="min">{-2*pi}</param>
-          <param name="max">{2*pi}</param>
+          <param name="min">-6.283185</param>
+          <param name="max">6.283185</param>
         </command_interface>
         <!-- <command_interface name="velocity">
           <param name="min">-3.2</param>

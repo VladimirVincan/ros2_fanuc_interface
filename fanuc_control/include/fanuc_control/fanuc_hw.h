@@ -41,7 +41,7 @@ class JointComms : public rclcpp::Node
 
 
 
-class HARDWARE_INTERFACE_PUBLIC FanucHw : public hardware_interface::SystemInterface
+class FanucHw : public hardware_interface::SystemInterface
 {
 public:
   CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
