@@ -145,6 +145,7 @@ def launch_setup(context, *args, **kwargs):
         ],
         output="both",
     )
+    # arguments=['--ros-args', '--log-level', 'DEBUG'],
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",

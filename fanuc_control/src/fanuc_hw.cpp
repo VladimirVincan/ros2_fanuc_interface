@@ -239,7 +239,7 @@ return_type FanucHw::read(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     const auto name_pos = info_.joints[i].name + "/" + hardware_interface::HW_IF_POSITION;
     auto joint_position_prev = get_state(name_pos);
     set_state(name_vel, (jp[i] - joint_position_prev) / dt);
-    set_state(name_pos, jp[i])
+    set_state(name_pos, jp[i]);
   }
 
   // {
