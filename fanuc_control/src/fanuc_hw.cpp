@@ -50,7 +50,7 @@ CallbackReturn FanucHw::on_init(const hardware_interface::HardwareInfo & info)
   {
     return CallbackReturn::ERROR;
   }
-  
+
   std::string ro = info_.hardware_parameters["read_only"];
   boost::algorithm::to_lower(ro);
   RCLCPP_INFO_STREAM(logger_,"\n RO::" << ro);
@@ -64,7 +64,7 @@ CallbackReturn FanucHw::on_init(const hardware_interface::HardwareInfo & info)
 
   std::string rmi = info_.hardware_parameters["use_rmi"];
   boost::algorithm::to_lower(rmi);
-  RCLCPP_FATAL_STREAM(logger_,"\n using RMI" << rmi);  
+  RCLCPP_FATAL_STREAM(logger_,"\n using RMI" << rmi);
   useRMI_ = ( rmi =="true") ? true : false;
 
 
@@ -78,7 +78,7 @@ CallbackReturn FanucHw::on_init(const hardware_interface::HardwareInfo & info)
   std::string robot_ip = info_.hardware_parameters["robot_ip"];
   RCLCPP_INFO_STREAM( logger_,"\n\n\nIP : "<< robot_ip << "\n\n\n\n "  );
 
-  
+
 
   if(useRMI_)
   {
@@ -87,17 +87,17 @@ CallbackReturn FanucHw::on_init(const hardware_interface::HardwareInfo & info)
     RCLCPP_INFO_STREAM(logger_,"RMI  initialized. Robot ip: "<<robot_ip);
   }
   else
-  {  
+  {
     EIP_driver_.reset( new fanuc_eth_ip (robot_ip) );
     RCLCPP_INFO_STREAM(logger_,"Initialized EIP driver at ip: " << robot_ip );
   }
 
   std::vector<double> j_pos={0.0,0.0,0.0,0.0,0.0,0.0};
-  
+
   joint_position_        .resize(6, 0.0);
   joint_position_prev_   .resize(6, 0.0);
   joint_velocities_      .resize(6, 0.0);
-  joint_position_command_.resize(6, 0.0); 
+  joint_position_command_.resize(6, 0.0);
 
   joint_names_.resize(joint_position_.size());
   for (size_t j = 0; j < joint_position_.size(); ++j)
@@ -123,7 +123,7 @@ CallbackReturn FanucHw::on_init(const hardware_interface::HardwareInfo & info)
   {
     joint_position_command_.at(i) = j_pos.at(i);
   }
-  
+
   if(useRMI_)
   {
     rmi_driver_.setTargetPosition(joint_position_command_);
@@ -140,41 +140,61 @@ CallbackReturn FanucHw::on_init(const hardware_interface::HardwareInfo & info)
   return CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::StateInterface> FanucHw::export_state_interfaces()
+
+CallbackReturn FanucHw::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  std::vector<hardware_interface::StateInterface> state_interfaces;
-  state_interfaces.emplace_back(info_.joints[0].name, "position", &joint_position_[0]);
-  state_interfaces.emplace_back(info_.joints[1].name, "position", &joint_position_[1]);
-  state_interfaces.emplace_back(info_.joints[2].name, "position", &joint_position_[2]);
-  state_interfaces.emplace_back(info_.joints[3].name, "position", &joint_position_[3]);
-  state_interfaces.emplace_back(info_.joints[4].name, "position", &joint_position_[4]);
-  state_interfaces.emplace_back(info_.joints[5].name, "position", &joint_position_[5]);
+  for (const auto & [name, descr] : joint_state_interfaces_)
+  {
+    set_state(name, 0.0);
+  }
+  for (const auto & [name, descr] : joint_command_interfaces_)
+  {
+    set_command(name, 0.0);
+  }
+  // for (const auto & [name, descr] : sensor_state_interfaces_)
+  // {
+  //   set_state(name, 0.0);
+  // }
 
-  state_interfaces.emplace_back(info_.joints[0].name, "velocity", &joint_velocities_[0]);
-  state_interfaces.emplace_back(info_.joints[1].name, "velocity", &joint_velocities_[1]);
-  state_interfaces.emplace_back(info_.joints[2].name, "velocity", &joint_velocities_[2]);
-  state_interfaces.emplace_back(info_.joints[3].name, "velocity", &joint_velocities_[3]);
-  state_interfaces.emplace_back(info_.joints[4].name, "velocity", &joint_velocities_[4]);
-  state_interfaces.emplace_back(info_.joints[5].name, "velocity", &joint_velocities_[5]);
-
-  return state_interfaces;
+  return CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::CommandInterface> FanucHw::export_command_interfaces()
-{
 
-  std::vector<hardware_interface::CommandInterface> command_interfaces;
+// std::vector<hardware_interface::StateInterface> FanucHw::export_state_interfaces()
+// {
+//   std::vector<hardware_interface::StateInterface> state_interfaces;
+//   state_interfaces.emplace_back(info_.joints[0].name, "position", &joint_position_[0]);
+//   state_interfaces.emplace_back(info_.joints[1].name, "position", &joint_position_[1]);
+//   state_interfaces.emplace_back(info_.joints[2].name, "position", &joint_position_[2]);
+//   state_interfaces.emplace_back(info_.joints[3].name, "position", &joint_position_[3]);
+//   state_interfaces.emplace_back(info_.joints[4].name, "position", &joint_position_[4]);
+//   state_interfaces.emplace_back(info_.joints[5].name, "position", &joint_position_[5]);
+
+//   state_interfaces.emplace_back(info_.joints[0].name, "velocity", &joint_velocities_[0]);
+//   state_interfaces.emplace_back(info_.joints[1].name, "velocity", &joint_velocities_[1]);
+//   state_interfaces.emplace_back(info_.joints[2].name, "velocity", &joint_velocities_[2]);
+//   state_interfaces.emplace_back(info_.joints[3].name, "velocity", &joint_velocities_[3]);
+//   state_interfaces.emplace_back(info_.joints[4].name, "velocity", &joint_velocities_[4]);
+//   state_interfaces.emplace_back(info_.joints[5].name, "velocity", &joint_velocities_[5]);
+
+//   return state_interfaces;
+// }
+
+// std::vector<hardware_interface::CommandInterface> FanucHw::export_command_interfaces()
+// {
+
+//   std::vector<hardware_interface::CommandInterface> command_interfaces;
 
 
-  command_interfaces.emplace_back(info_.joints[0].name, "position", &joint_position_command_[0]);
-  command_interfaces.emplace_back(info_.joints[1].name, "position", &joint_position_command_[1]);
-  command_interfaces.emplace_back(info_.joints[2].name, "position", &joint_position_command_[2]);
-  command_interfaces.emplace_back(info_.joints[3].name, "position", &joint_position_command_[3]);
-  command_interfaces.emplace_back(info_.joints[4].name, "position", &joint_position_command_[4]);
-  command_interfaces.emplace_back(info_.joints[5].name, "position", &joint_position_command_[5]);
+//   command_interfaces.emplace_back(info_.joints[0].name, "position", &joint_position_command_[0]);
+//   command_interfaces.emplace_back(info_.joints[1].name, "position", &joint_position_command_[1]);
+//   command_interfaces.emplace_back(info_.joints[2].name, "position", &joint_position_command_[2]);
+//   command_interfaces.emplace_back(info_.joints[3].name, "position", &joint_position_command_[3]);
+//   command_interfaces.emplace_back(info_.joints[4].name, "position", &joint_position_command_[4]);
+//   command_interfaces.emplace_back(info_.joints[5].name, "position", &joint_position_command_[5]);
 
-  return command_interfaces;
-}
+//   return command_interfaces;
+// }
 
 return_type FanucHw::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
@@ -185,7 +205,7 @@ return_type FanucHw::read(const rclcpp::Time & /*time*/, const rclcpp::Duration 
   std::vector<double> cp;
   cp.resize(6);
 
-  if(useRMI_) 
+  if(useRMI_)
   {
     jp = rmi_driver_.getPosition();
 
@@ -210,24 +230,34 @@ return_type FanucHw::read(const rclcpp::Time & /*time*/, const rclcpp::Duration 
     joint_position_prev_[j] = jp[j];
 
     RCLCPP_DEBUG_STREAM(logger_,jp[j]);
-  }  
-  
-  {  
-    auto msg = sensor_msgs::msg::JointState();
-    msg.header.stamp = comms_->get_clock()->now();
-    msg.name = joint_names_;
-    msg.position = joint_position_;
-    msg.velocity = joint_velocities_;
-    comms_->fb_pub_->publish(msg);
   }
+
+  // double dt = period.seconds();
+  for (std::size_t i = 0; i < info_.joints.size(); i++)
   {
-    auto msg = sensor_msgs::msg::JointState();
-    msg.header.stamp = comms_->get_clock()->now();
-    std::vector<std::string> n = {"x","y","z","Rx","Ry","Rz"};
-    msg.name = n;
-    msg.position = cp;
-    comms_->cart_fb_pub_->publish(msg);
+    const auto name_vel = info_.joints[i].name + "/" + hardware_interface::HW_IF_VELOCITY;
+    const auto name_pos = info_.joints[i].name + "/" + hardware_interface::HW_IF_POSITION;
+    auto joint_position_prev = get_state(name_pos);
+    set_state(name_vel, (jp[i] - joint_position_prev) / dt);
+    set_state(name_pos, jp[i])
   }
+
+  // {
+  //   auto msg = sensor_msgs::msg::JointState();
+  //   msg.header.stamp = comms_->get_clock()->now();
+  //   msg.name = joint_names_;
+  //   msg.position = joint_position_;
+  //   msg.velocity = joint_velocities_;
+  //   comms_->fb_pub_->publish(msg);
+  // }
+  // {
+  //   auto msg = sensor_msgs::msg::JointState();
+  //   msg.header.stamp = comms_->get_clock()->now();
+  //   std::vector<std::string> n = {"x","y","z","Rx","Ry","Rz"};
+  //   msg.name = n;
+  //   msg.position = cp;
+  //   comms_->cart_fb_pub_->publish(msg);
+  // }
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   RCLCPP_DEBUG_STREAM(logger_,"READ time:  = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[microseconds]" );
@@ -237,7 +267,7 @@ return_type FanucHw::read(const rclcpp::Time & /*time*/, const rclcpp::Duration 
 
 return_type FanucHw::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  
+
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   if(!read_only_)
   {
@@ -250,7 +280,7 @@ return_type FanucHw::write(const rclcpp::Time & /*time*/, const rclcpp::Duration
       if(EIP_driver_->read_register(RegisterEnum::MotionStatus) == StatusEnum::Ros )
       {
         RCLCPP_DEBUG_STREAM(logger_,"DPM INACTIVE");
-          EIP_driver_->write_pos_register(joint_position_command_);
+        EIP_driver_->write_pos_register(joint_position_command_);
       }
       else
       {
@@ -261,12 +291,12 @@ return_type FanucHw::write(const rclcpp::Time & /*time*/, const rclcpp::Duration
     }
   }
 
-  
-  auto msg = sensor_msgs::msg::JointState();
-  msg.header.stamp = comms_->get_clock()->now();
-  msg.name = joint_names_;
-  msg.position = joint_position_command_;
-  comms_->cmd_pub_->publish(msg);
+
+  // auto msg = sensor_msgs::msg::JointState();
+  // msg.header.stamp = comms_->get_clock()->now();
+  // msg.name = joint_names_;
+  // msg.position = joint_position_command_;
+  // comms_->cmd_pub_->publish(msg);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   RCLCPP_DEBUG_STREAM(logger_,"WRITE time:  = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[microseconds]" );
 

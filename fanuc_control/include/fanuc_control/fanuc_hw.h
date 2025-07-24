@@ -46,9 +46,7 @@ class FanucHw : public hardware_interface::SystemInterface
 public:
   CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
-  std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-
-  std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+  CallbackReturn on_configure(const rclcpp_lifecycle::State & /*previous_state*/);
 
   return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
@@ -69,7 +67,7 @@ private:
   rclcpp::Logger logger_ = rclcpp::get_logger("fanuc_hw");
   rclcpp::executors::SingleThreadedExecutor executor_;
   std::shared_ptr<JointComms> comms_;
-  std::vector<std::string> joint_names_; 
+  std::vector<std::string> joint_names_;
   std::vector<double>      joint_pos_  ;
   std::shared_ptr<fanuc_eth_ip> EIP_driver_;
   rmi::RMIDriver rmi_driver_;
