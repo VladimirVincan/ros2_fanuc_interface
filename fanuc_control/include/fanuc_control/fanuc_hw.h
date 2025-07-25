@@ -46,7 +46,11 @@ class FanucHw : public hardware_interface::SystemInterface
 public:
   CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
-  CallbackReturn on_configure(const rclcpp_lifecycle::State & /*previous_state*/);
+  std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+
+  std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+
+  // CallbackReturn on_configure(const rclcpp_lifecycle::State & /*previous_state*/);
 
   return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
